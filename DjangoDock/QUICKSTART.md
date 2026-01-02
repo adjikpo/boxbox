@@ -1,125 +1,100 @@
-# ⚡ Quick Start - DjangoDock en 5 minutes
+# Quick Start - DjangoDock en 5 minutes
 
-Créez un projet Django avec Docker en moins de 5 minutes.
+Creez un projet Django avec Docker en moins de 5 minutes.
 
 ---
 
-## 🚀 Étape 1 : Lancer le script (2 min)
+## Etape 1 : Lancer le script
 
 ```bash
-cd /Users/adjikpo/Documents/Projets/boxbox/DjangoDock
+# Copier DjangoDock dans votre dossier
+cp -r DjangoDock ~/mon-projet
+cd ~/mon-projet
+
+# Lancer le script
 chmod +x setup.sh
 ./setup.sh
 ```
 
-## 🎯 Étape 2 : Configuration interactif (1 min)
+## Etape 2 : Configuration interactive
 
 ```bash
-Nom du projet (défaut: django_project): ↵  (ou votre nom)
-Port web Django (défaut: 8000): ↵
-Port PostgreSQL (défaut: 5432): ↵
-Version Django LTS (défaut: 4.2): ↵
-Version Python (défaut: 3.11): ↵
-Nom de la base de données (défaut: X_db): ↵
-Utilisateur PostgreSQL (défaut: postgres): ↵
-Mot de passe PostgreSQL (défaut: postgres): ↵
+Nom du projet (defaut: django_project): [NOM_DU_PROJET]
+Port web Django (defaut: 8000): 8000
+Port PostgreSQL (defaut: 5432): 5432
+Version Django LTS (defaut: 4.2): 4.2
+Version Python (defaut: 3.11): 3.11
+Nom de la base de donnees (defaut: X_db): [NOM_DU_PROJET]_db
+Utilisateur PostgreSQL (defaut: postgres): postgres
+Mot de passe PostgreSQL (defaut: postgres): ****
 
 Continuer ? (y/n): y
 ```
 
-## ✅ Étape 3 : Initialiser (2 min)
+## Etape 3 : Initialiser le projet
 
 ```bash
-cd django_project
+cd [NOM_DU_PROJET]
 make init
 ```
 
-*Cela lance automatiquement :*
-- Build Docker image
-- Démarrage PostgreSQL + Django
+Cela lance automatiquement :
+- Build de l'image Docker
+- Demarrage PostgreSQL + Django
 - Migrations BD
-- Création superuser (interactive)
+- Creation superuser (interactive)
 
-## 🌐 Étape 4 : Accéder
+## Etape 4 : Acceder a l'application
 
 ```
 Django Admin : http://localhost:8000/admin
-Django Home : http://localhost:8000
+Django Home  : http://localhost:8000
 ```
-
-*Utilisez les credentials créés lors de `make init`*
 
 ---
 
-## 📋 Commandes essentielles
+## Commandes essentielles
 
 ```bash
 make help              # Voir toutes les commandes
-make up                # Démarrer
-make down              # Arrêter
+make up                # Demarrer
+make down              # Arreter
+make dev               # Demarrer avec logs
 make logs              # Voir les logs
 make shell             # Django shell
 make migrate           # Migrations
 make createsuperuser   # Nouvel admin
 make test              # Tests
-make clean             # Nettoyer (⚠️ supprime les données)
+make clean             # Nettoyer (supprime les donnees)
 ```
 
 ---
 
-## 🔧 Changer le port
+## Alternative : Utiliser le prompt IA
 
-```bash
-# Éditer .env
-PORT=8080
-
-# Redémarrer
-make restart
-
-# Accéder à
-http://localhost:8080
-```
+Si tu preferes generer l'architecture via une IA, voir [PROMPT_GENERATOR.md](PROMPT_GENERATOR.md).
 
 ---
 
-## 🐛 Troubleshooting rapide
+## Troubleshooting rapide
 
 **"Port 8000 already in use"**
 ```bash
-PORT=8080 make restart
+# Modifier PORT dans .env puis :
+make restart
 ```
 
 **"Connection refused"**
 ```bash
-make clean
-make build
-make up
+make clean && make build && make up
 ```
 
 **Module not found**
 ```bash
 echo "module-name" >> requirements.txt
-make build
-make restart
+make build && make restart
 ```
 
 ---
 
-## 📚 Documentation complète
-
-- **README.md** : Documentation générale
-- **GUIDE.md** : Guide détaillé pas-à-pas
-- **RAPPORT_FINAL.txt** : Rapport complet
-
----
-
-## ✨ Prochaines étapes
-
-1. Consulter le README.md pour les options
-2. Créer une app : `docker-compose exec web python manage.py startapp myapp`
-3. Développer : `make dev` (logs en direct)
-4. Lire GUIDE.md pour la gestion BD et dépendances
-
----
-
-**DjangoDock - Créez des projets Django en 5 min ! 🐳**
+**DjangoDock** - Creez des projets Django containerises en 5 min !

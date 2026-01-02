@@ -1,139 +1,144 @@
 .DEFAULT_GOAL := help
-.PHONY: help build up down logs clean install dev restart stop
+.PHONY: help build up down logs clean install dev restart stop create-project shell add-package tunnel web
+
+# Variables - MODIFIER ICI LE NOM DU PROJET
+PROJECT_NAME ?= App
 
 # Couleurs pour l'affichage
 BLUE := \033[0;34m
 GREEN := \033[0;32m
 YELLOW := \033[0;33m
-NC := \033[0m # No Color
+NC := \033[0m
 
 help:
-	@echo "$(BLUE)📦 Commandes Docker Compose disponibles:$(NC)"
+	@echo "$(BLUE)React Native / Expo Docker Commands$(NC)"
 	@echo ""
-	@echo "$(GREEN)Build & Démarrage$(NC)"
-	@echo "  make build             # Construire les images Docker"
-	@echo "  make up                # Démarrer tous les services"
-	@echo "  make dev               # Démarrer en mode développement (foreground)"
-	@echo "  make down              # Arrêter les services"
-	@echo "  make stop              # Pause les services (sans les détruire)"
+	@echo "$(GREEN)Initialisation$(NC)"
+	@echo "  make build                    # Construire l'image Docker"
+	@echo "  make create-project           # Creer un nouveau projet Expo"
+	@echo "  make install                  # Installer les dependances npm"
 	@echo ""
-	@echo "$(GREEN)Développement$(NC)"
-	@echo "  make install           # Installer les dépendances (npm install)"
-	@echo "  make shell-expo        # Shell interactif dans le container Expo"
-	@echo "  make shell-api         # Shell interactif dans le container API"
-	@echo "  make logs              # Afficher les logs de tous les services"
-	@echo "  make logs-expo         # Logs du service Expo"
-	@echo "  make logs-api          # Logs du service API"
-	@echo "  make restart           # Redémarrer tous les services"
-	@echo "  make restart-expo      # Redémarrer Expo"
-	@echo "  make restart-api       # Redémarrer l'API"
+	@echo "$(GREEN)Developpement$(NC)"
+	@echo "  make up                       # Demarrer Expo en arriere-plan"
+	@echo "  make dev                      # Demarrer Expo avec logs"
+	@echo "  make down                     # Arreter les services"
+	@echo "  make stop                     # Pause les services"
+	@echo "  make restart                  # Redemarrer les services"
+	@echo ""
+	@echo "$(GREEN)Utilitaires$(NC)"
+	@echo "  make shell                    # Shell dans le container Expo"
+	@echo "  make logs                     # Voir les logs"
+	@echo "  make add-package PKG=name     # Ajouter un package npm"
+	@echo "  make tunnel                   # Lancer en mode tunnel"
+	@echo "  make web                      # Lancer en mode web"
 	@echo ""
 	@echo "$(GREEN)Nettoyage$(NC)"
-	@echo "  make clean             # Arrêter et supprimer volumes (⚠️ données perdues)"
-	@echo "  make prune             # Nettoyer images et volumes inutilisés"
+	@echo "  make clean                    # Supprimer containers et volumes"
+	@echo "  make prune                    # Nettoyage complet Docker"
 	@echo ""
-	@echo "$(YELLOW)⚠️  Attention:$(NC)"
-	@echo "  - 'make clean' supprime tous les volumes (BD, cache npm, etc)"
-	@echo "  - Toujours commiter .env.example, jamais .env"
+	@echo "$(YELLOW)Note: Modifier PROJECT_NAME dans le Makefile$(NC)"
 	@echo ""
 
-# ==================== Build et Démarrage ====================
+# ==================== Build ====================
 
 build:
-	@echo "$(BLUE)🏗️  Construction des images Docker...$(NC)"
+	@echo "$(BLUE)Construction de l'image Docker...$(NC)"
 	docker-compose build
+	@echo "$(GREEN)Image construite!$(NC)"
 
-up:
-	@echo "$(BLUE)🚀 Démarrage des services en arrière-plan...$(NC)"
-	docker-compose up -d
-	@echo "$(GREEN)✅ Services lancés!$(NC)"
+# ==================== Creation de projet ====================
+
+create-project:
+	@echo "$(BLUE)Creation du projet Expo: $(PROJECT_NAME)...$(NC)"
+	docker-compose run --rm create npx create-expo-app $(PROJECT_NAME) --template blank
+	@echo "$(GREEN)Projet $(PROJECT_NAME) cree!$(NC)"
 	@echo ""
-	@echo "Accès:"
-	@echo "  - Frontend Expo (Web): http://localhost:19006"
-	@echo "  - Backend API: http://localhost:4000"
-	@echo "  - QR Code Expo: voir 'make logs-expo'"
+	@echo "$(YELLOW)Prochaine etape: make install$(NC)"
 
-dev:
-	@echo "$(BLUE)🎯 Démarrage en mode développement (foreground)...$(NC)"
-	docker-compose up
-
-stop:
-	@echo "$(YELLOW)⏸️  Pause des services...$(NC)"
-	docker-compose stop
-
-down:
-	@echo "$(YELLOW)🛑 Arrêt des services...$(NC)"
-	docker-compose down
-
-# ==================== Développement ====================
+# ==================== Installation ====================
 
 install:
-	@echo "$(BLUE)📦 Installation des dépendances...$(NC)"
+	@echo "$(BLUE)Installation des dependances npm...$(NC)"
 	docker-compose run --rm cli npm install
-	@echo "$(GREEN)✅ Dépendances installées!$(NC)"
+	@echo "$(GREEN)Dependances installees!$(NC)"
 
-shell-expo:
-	@echo "$(BLUE)🔧 Shell interactif Expo...$(NC)"
-	docker-compose exec expo sh
+# ==================== Demarrage ====================
 
-shell-api:
-	@echo "$(BLUE)🔧 Shell interactif API...$(NC)"
-	docker-compose exec api sh
+up:
+	@echo "$(BLUE)Demarrage d'Expo en arriere-plan...$(NC)"
+	docker-compose up -d expo
+	@echo "$(GREEN)Expo demarre!$(NC)"
+	@echo ""
+	@echo "Acces:"
+	@echo "  - Expo DevTools: http://localhost:19002"
+	@echo "  - Metro Bundler: http://localhost:8081"
+	@echo "  - App Web: http://localhost:19006"
+	@echo ""
+	@echo "Voir les logs: make logs"
 
-logs:
-	@echo "$(BLUE)📋 Logs de tous les services (Ctrl+C pour quitter)...$(NC)"
-	docker-compose logs -f
+dev:
+	@echo "$(BLUE)Demarrage d'Expo avec logs...$(NC)"
+	docker-compose up expo
 
-logs-expo:
-	@echo "$(BLUE)📋 Logs Expo (Ctrl+C pour quitter)...$(NC)"
-	docker-compose logs -f expo
+down:
+	@echo "$(YELLOW)Arret des services...$(NC)"
+	docker-compose down
 
-logs-api:
-	@echo "$(BLUE)📋 Logs API (Ctrl+C pour quitter)...$(NC)"
-	docker-compose logs -f api
+stop:
+	@echo "$(YELLOW)Pause des services...$(NC)"
+	docker-compose stop
 
 restart:
-	@echo "$(YELLOW)🔄 Redémarrage de tous les services...$(NC)"
-	docker-compose restart
-	@echo "$(GREEN)✅ Services redémarrés!$(NC)"
-
-restart-expo:
-	@echo "$(YELLOW)🔄 Redémarrage Expo...$(NC)"
+	@echo "$(YELLOW)Redemarrage des services...$(NC)"
 	docker-compose restart expo
+	@echo "$(GREEN)Services redemarres!$(NC)"
 
-restart-api:
-	@echo "$(YELLOW)🔄 Redémarrage API...$(NC)"
-	docker-compose restart api
+# ==================== Utilitaires ====================
+
+shell:
+	@echo "$(BLUE)Shell interactif Expo...$(NC)"
+	docker-compose run --rm cli sh
+
+logs:
+	@echo "$(BLUE)Logs Expo (Ctrl+C pour quitter)...$(NC)"
+	docker-compose logs -f expo
+
+add-package:
+ifndef PKG
+	@echo "$(YELLOW)Usage: make add-package PKG=nom-du-package$(NC)"
+else
+	@echo "$(BLUE)Installation de $(PKG)...$(NC)"
+	docker-compose run --rm cli npm install $(PKG)
+	@echo "$(GREEN)$(PKG) installe!$(NC)"
+endif
+
+tunnel:
+	@echo "$(BLUE)Lancement en mode tunnel...$(NC)"
+	docker-compose run --rm -p 19000:19000 -p 19001:19001 -p 19002:19002 cli npx expo start --tunnel
+
+web:
+	@echo "$(BLUE)Lancement en mode web...$(NC)"
+	docker-compose run --rm -p 19006:19006 -p 8081:8081 cli npx expo start --web
 
 # ==================== Nettoyage ====================
 
 clean:
-	@echo "$(YELLOW)⚠️  Suppression de TOUS les containers et volumes...$(NC)"
+	@echo "$(YELLOW)Suppression des containers et volumes...$(NC)"
 	docker-compose down -v
-	@echo "$(RED)✅ Volumes supprimés (données perdues si pas de backup)$(NC)"
+	@echo "$(GREEN)Nettoyage termine!$(NC)"
 
 prune:
-	@echo "$(YELLOW)🧹 Nettoyage des ressources inutilisées...$(NC)"
-	docker-compose down
-	docker volume prune -f
+	@echo "$(YELLOW)Nettoyage complet Docker...$(NC)"
+	docker-compose down -v
 	docker system prune -f
-	@echo "$(GREEN)✅ Nettoyage terminé!$(NC)"
+	@echo "$(GREEN)Nettoyage termine!$(NC)"
 
-# ==================== Utilitaires ====================
+# ==================== Alias ====================
+
+init: build create-project install
+	@echo "$(GREEN)Initialisation complete!$(NC)"
+	@echo "Lancer: make dev"
 
 ps:
-	@echo "$(BLUE)📊 État des containers:$(NC)"
+	@echo "$(BLUE)Etat des containers:$(NC)"
 	docker-compose ps
-
-version:
-	@echo "$(BLUE)📌 Versions:$(NC)"
-	@echo "Docker: $$(docker --version)"
-	@echo "Docker Compose: $$(docker-compose --version)"
-	@echo "Node (dans le container): $$(docker-compose run --rm cli node --version)"
-	@echo "npm (dans le container): $$(docker-compose run --rm cli npm --version)"
-
-# Alias utiles
-init: build up
-	@echo "$(GREEN)✨ Initialisation complète!$(NC)"
-
-status: ps
