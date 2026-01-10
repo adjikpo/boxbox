@@ -1,0 +1,50 @@
+# Git
+.git
+.gitignore
+
+# Node
+node_modules
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Next.js
+.next
+out
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Environment
+.env
+.env.*
+!.env.example
+!.env.local.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+dist
+build
+
+# pnpm
+.pnpm-store
+
+# Testing
+coverage
+.nyc_output
+
+# Misc
+*.log
+*.md
+!README.md
