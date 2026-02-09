@@ -4,6 +4,46 @@ Historique des versions et mises a jour de BoxBox.
 
 ---
 
+## [1.2.0] - 2025-02-09
+
+**Status** : Production Ready
+
+### Nouveautés
+
+#### CLI boxbox.sh
+- Nouveau script CLI à la racine pour créer des projets rapidement
+- `./boxbox.sh list` — liste les templates disponibles
+- `./boxbox.sh new <nom> --template <vercel|django|rn>` — crée un nouveau projet
+
+#### Docker Compose — tous les templates
+- Retrait de `version: '3.8'` (deprecated Compose V2)
+- Ajout de healthchecks sur les services principaux (web, expo)
+
+#### VercelDock
+- Retrait de WATCHPACK_POLLING et CHOKIDAR_USEPOLLING (inutiles)
+- Ajout du service supabase-studio avec profil "full" (port 3001)
+- Healthcheck sur le service web
+- Bump Node.js 20 → 22 Alpine (Dockerfile + Dockerfile.dev)
+- Fichier `.node-version` (22)
+
+#### RNDock
+- Healthcheck sur le service expo
+- Fichier `.node-version` (22)
+
+#### Makefiles — tous les templates
+- Nouvelles commandes : `status`, `test`, `lint`, `typecheck`
+- VercelDock : commandes `db-dump` et `db-restore`
+
+#### CI/CD
+- GitHub Actions workflow (`.github/workflows/ci.yml`)
+- Vérification des fichiers, Makefiles, et conventions
+
+#### Documentation
+- `CONTRIBUTING.md` — guidelines pour ajouter un nouveau Dock
+- README mis à jour avec le CLI et les nouvelles commandes
+
+---
+
 ## [1.1.0] - 2025-01-10
 
 **Status** : Production Ready

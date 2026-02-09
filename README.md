@@ -80,6 +80,42 @@ make dev
 
 ---
 
+## CLI rapide — boxbox.sh
+
+Créer un projet en une commande :
+
+```bash
+# Lister les templates
+./boxbox.sh list
+
+# Créer un nouveau projet
+./boxbox.sh new myapp --template vercel
+./boxbox.sh new myapi --template django
+./boxbox.sh new myapp --template rn
+```
+
+---
+
+## Nouvelles commandes Make
+
+Tous les templates supportent maintenant :
+
+```bash
+make status      # État des services
+make test        # Lancer les tests
+make lint        # Lancer le linter
+make typecheck   # Vérification des types TypeScript
+```
+
+VercelDock uniquement :
+
+```bash
+make db-dump     # Export de la base PostgreSQL
+make db-restore FILE=backup.sql  # Restaurer un backup
+```
+
+---
+
 ## Structure du depot
 
 ```

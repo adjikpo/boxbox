@@ -210,8 +210,6 @@ create_docker_compose() {
     print_info "Création du docker-compose.yml..."
     
     cat > "docker-compose.yml" << EOF
-version: '3.8'
-
 services:
   # PostgreSQL Database
   db:
@@ -269,6 +267,12 @@ services:
     networks:
       - django_network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
 volumes:
   postgres_data:
@@ -634,6 +638,36 @@ bash-web:
 bash-db:
 	@echo "\$(BLUE)🔧 Accès au psql...\$(NC)"
 	docker-compose exec db psql -U ${DB_USER} -d ${DB_NAME}
+
+lint:
+	@echo "\$(BLUE)🔍 Linting...\$(NC)"
+	docker-compose exec web flake8 .
+
+typecheck:
+	@echo "\$(BLUE)🔍 Type checking...\$(NC)"
+	docker-compose exec web mypy .
+
+status:
+	@echo "\$(BLUE)📊 Etat des services:\$(NC)"
+	@docker-compose ps
+	@echo ""
+	@echo "\$(GREEN)URLs:\$(NC)"
+	@echo "  - Django: http://localhost:${WEB_PORT}"
+	@echo "  - PostgreSQL: localhost:${DB_PORT}"
+
+db-dump:
+	@echo "\$(BLUE)💾 Dump de la base de donnees...\$(NC)"
+	docker-compose exec db pg_dump -U ${DB_USER} ${DB_NAME} > dump_\$\$(date +%Y%m%d_%H%M%S).sql
+	@echo "\$(GREEN)✅ Dump cree!\$(NC)"
+
+db-restore:
+ifndef SQL
+	@echo "\$(YELLOW)Usage: make db-restore SQL=fichier.sql\$(NC)"
+else
+	@echo "\$(BLUE)📥 Restauration de la base de donnees...\$(NC)"
+	cat \$(SQL) | docker-compose exec -T db psql -U ${DB_USER} -d ${DB_NAME}
+	@echo "\$(GREEN)✅ Base restauree!\$(NC)"
+endif
 EOF
 
     print_success "Makefile créé"

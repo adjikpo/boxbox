@@ -1,5 +1,5 @@
 # Dockerfile pour le backend API Node.js/Express
-FROM node:20-alpine
+FROM node:22-alpine
 
 # Tools pour compiler les modules natifs (better-sqlite3, etc)
 RUN apk add --no-cache \

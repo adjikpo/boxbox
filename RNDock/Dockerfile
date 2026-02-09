@@ -1,5 +1,5 @@
 # Multi-stage build pour React Native + Expo
-FROM node:20-alpine
+FROM node:22-alpine
 
 # Dépendances utiles pour développement et compilation native
 RUN apk add --no-cache \
