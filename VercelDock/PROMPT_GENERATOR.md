@@ -13,7 +13,7 @@ Cree une architecture Docker pour containeriser un projet Next.js (Vercel) avec 
 
 ### Structure de fichiers a generer :
 
-1. **Dockerfile.dev** - Image Node 20 Alpine pour developpement :
+1. **Dockerfile.dev** - Image Node 22 Alpine pour developpement :
    - Activer corepack + pnpm
    - Workdir : /app
    - Installer les dependances avec pnpm

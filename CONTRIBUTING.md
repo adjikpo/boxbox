@@ -1,37 +1,59 @@
 # Contributing to BoxBox
 
-Merci de contribuer à BoxBox ! Voici comment ajouter un nouveau Dock.
+Merci de contribuer a BoxBox ! 🐳
 
-## Ajouter un nouveau template (Dock)
+## Comment contribuer
 
-1. **Créer un dossier** `NomDock/` à la racine du repo
-2. **Fichiers requis** :
-   - `docker-compose.yml` — services Docker (pas de `version:`, c'est deprecated)
-   - `Dockerfile` — image de production
-   - `Makefile` — commandes standard (build, up, dev, down, logs, clean, install, status, test, lint, typecheck)
-   - `README.md` — documentation du template
-   - `PROMPT_GENERATOR.md` — prompt IA pour générer l'architecture
-   - `.dockerignore`
-3. **Conventions Makefile** :
-   - Inclure les targets : `help`, `build`, `up`, `dev`, `down`, `logs`, `clean`, `install`, `status`, `test`, `lint`, `typecheck`
-   - Utiliser les couleurs (BLUE, GREEN, YELLOW, NC)
-   - Variable `PROJECT_NAME` configurable
-4. **Mettre à jour** :
-   - `README.md` racine — ajouter le template dans le tableau
-   - `CHANGELOG.md` — documenter l'ajout
-   - `boxbox.sh` — ajouter le template dans le CLI
-5. **Tester** : `make build && make create-project` doit fonctionner
+### Signaler un bug
+1. Verifier que le bug n'est pas deja signale dans les [Issues](../../issues)
+2. Creer une issue avec un titre clair et les etapes pour reproduire
+
+### Proposer une amelioration
+1. Ouvrir une issue pour discuter de l'idee
+2. Forker le repo et creer une branche (`git checkout -b feature/ma-feature`)
+3. Commiter vos changements (`git commit -m "feat: description"`)
+4. Pousser la branche (`git push origin feature/ma-feature`)
+5. Ouvrir une Pull Request
 
 ## Conventions
 
-- Pas de `version:` dans docker-compose.yml (Compose V2)
-- Node 22 Alpine pour les images Node.js
-- Healthchecks sur les services principaux
-- Placeholders `[NOM_DU_PROJET]` uniformisés
+### Commits
+On utilise [Conventional Commits](https://www.conventionalcommits.org/) :
+- `feat:` nouvelle fonctionnalite
+- `fix:` correction de bug
+- `docs:` documentation
+- `chore:` maintenance
 
-## Pull Request
+### Structure des templates
+Chaque template doit contenir :
+- `README.md` — Documentation du template
+- `PROMPT_GENERATOR.md` — Prompt pour generation IA
+- `Makefile` ou `setup.sh` — Commandes de setup
+- `docker-compose.yml` — Services Docker
+- Les commandes Makefile standard : `init`, `build`, `up`, `down`, `dev`, `test`, `lint`, `typecheck`, `status`, `clean`
 
-1. Fork + branche feature
-2. Appliquer les changements
-3. Tester le template end-to-end
-4. PR avec description claire
+### Tests
+Avant de soumettre une PR :
+```bash
+# Verifier la syntaxe des scripts
+bash -n DjangoDock/setup.sh
+# Verifier que les Makefiles sont valides
+make -n -f VercelDock/Makefile help
+make -n -f RNDock/Makefile help
+```
+
+## Setup local
+
+```bash
+git clone https://github.com/adjikpo/boxbox.git
+cd boxbox
+git checkout -b feature/ma-feature
+```
+
+## Questions ?
+
+Ouvrir une issue ou contacter les mainteneurs.
+
+---
+
+**BoxBox** - Templates Docker cle en main

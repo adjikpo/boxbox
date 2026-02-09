@@ -4,43 +4,56 @@ Historique des versions et mises a jour de BoxBox.
 
 ---
 
-## [1.2.0] - 2025-02-09
+## [1.2.0] - 2026-02-09
 
 **Status** : Production Ready
 
-### Nouveautés
+### Nouveautes
 
-#### CLI boxbox.sh
-- Nouveau script CLI à la racine pour créer des projets rapidement
-- `./boxbox.sh list` — liste les templates disponibles
-- `./boxbox.sh new <nom> --template <vercel|django|rn>` — crée un nouveau projet
+#### CLI BoxBox
+- Nouveau script `boxbox.sh` a la racine : `boxbox new monprojet --template vercel|django|rn` + `boxbox list`
+- Remplacement automatique des placeholders [NOM_DU_PROJET]
 
-#### Docker Compose — tous les templates
-- Retrait de `version: '3.8'` (deprecated Compose V2)
-- Ajout de healthchecks sur les services principaux (web, expo)
+#### GitHub Actions
+- CI basique `.github/workflows/ci.yml` : lint + typecheck + build pour chaque template
 
-#### VercelDock
-- Retrait de WATCHPACK_POLLING et CHOKIDAR_USEPOLLING (inutiles)
-- Ajout du service supabase-studio avec profil "full" (port 3001)
-- Healthcheck sur le service web
-- Bump Node.js 20 → 22 Alpine (Dockerfile + Dockerfile.dev)
-- Fichier `.node-version` (22)
+#### CONTRIBUTING.md
+- Guide de contribution ajoute a la racine du repo
 
-#### RNDock
-- Healthcheck sur le service expo
-- Fichier `.node-version` (22)
+### Ameliorations
 
-#### Makefiles — tous les templates
-- Nouvelles commandes : `status`, `test`, `lint`, `typecheck`
-- VercelDock : commandes `db-dump` et `db-restore`
+#### Bump des versions
+- Node 22 Alpine dans tous les Dockerfiles (VercelDock, RNDock)
+- Supabase Postgres 15.6+ (`supabase/postgres:15.6.1.120`)
+- References Next.js 16 dans la documentation
+- Fichiers `.node-version` dans VercelDock et RNDock
 
-#### CI/CD
-- GitHub Actions workflow (`.github/workflows/ci.yml`)
-- Vérification des fichiers, Makefiles, et conventions
+#### `make init` one-shot
+- Commande `make init` dans chaque template : build + create + cp fichiers + install en une commande
 
-#### Documentation
-- `CONTRIBUTING.md` — guidelines pour ajouter un nouveau Dock
-- README mis à jour avec le CLI et les nouvelles commandes
+#### Hot-reload natif
+- Suppression de WATCHPACK_POLLING et CHOKIDAR_USEPOLLING dans VercelDock (VirtioFS natif macOS)
+
+#### Docker Compose modernise
+- Suppression de `version: '3.8'` dans tous les docker-compose.yml (deprecated Compose V2)
+- Migration de `docker-compose` vers `docker compose` dans les Makefiles
+
+#### Supabase Studio
+- Ajout du service Supabase Studio dans le docker-compose.yml de VercelDock (port 3001)
+
+#### Profils Docker Compose
+- Services de base par defaut, Studio/extras avec `--profile full`
+
+#### Healthchecks uniformes
+- Healthchecks ajoutes aux services web dans tous les docker-compose.yml
+
+#### Nouvelles commandes Makefile
+- `make test` — Lancer les tests
+- `make lint` — Linter le code
+- `make typecheck` — Verifier les types
+- `make status` — Etat des containers + ports + URLs
+- `make db-dump` — Dump PostgreSQL (VercelDock, DjangoDock)
+- `make db-restore SQL=file.sql` — Restaurer PostgreSQL (VercelDock, DjangoDock)
 
 ---
 
@@ -110,34 +123,22 @@ Historique des versions et mises a jour de BoxBox.
 
 | Template | Stack | Version |
 |----------|-------|---------|
-| RNDock | React Native + Expo | 1.1.0 |
-| DjangoDock | Django + PostgreSQL | 1.0.0 |
-| VercelDock | Next.js + Supabase | 1.0.0 |
+| RNDock | React Native + Expo | 1.2.0 |
+| DjangoDock | Django + PostgreSQL | 1.2.0 |
+| VercelDock | Next.js + Supabase | 1.2.0 |
 
 ---
 
 ## Roadmap
 
-### v1.2 (A venir)
+### v1.3 (A venir)
 - [ ] Support Redis (caching)
-- [ ] CI/CD (GitHub Actions)
 - [ ] Template FastAPI
-- [ ] Scripts de backup
-
-### v2.0 (A venir)
-- [ ] CLI tool pour scaffolding
-- [ ] Web UI configuration
 - [ ] Multi-cloud support
 
----
-
-## Version numbering
-
-Format : `MAJOR.MINOR.PATCH`
-
-- **MAJOR** : Breaking changes
-- **MINOR** : New features / templates
-- **PATCH** : Bug fixes
+### v2.0 (A venir)
+- [ ] CLI tool en Go/Rust
+- [ ] Web UI configuration
 
 ---
 

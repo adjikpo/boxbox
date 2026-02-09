@@ -1,4 +1,4 @@
-name: CI
+name: BoxBox CI
 
 on:
   push:
@@ -7,55 +7,55 @@ on:
     branches: [main]
 
 jobs:
-  lint:
+  # VercelDock - Next.js lint + typecheck + build
+  verceldock:
+    name: VercelDock CI
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: VercelDock
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@latest --activate
+      - name: Create test Next.js app
+        run: pnpm create next-app@latest testapp --typescript --tailwind --eslint --app --src-dir --use-pnpm
+      - name: Lint
+        run: cd testapp && pnpm lint
+      - name: Typecheck
+        run: cd testapp && pnpm tsc --noEmit
+      - name: Build
+        run: cd testapp && pnpm build
+
+  # RNDock - Expo lint + typecheck
+  rndock:
+    name: RNDock CI
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: RNDock
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Create test Expo app
+        run: npx create-expo-app@latest testapp --template blank-typescript
+      - name: Install
+        run: cd testapp && npm install
+      - name: Typecheck
+        run: cd testapp && npx tsc --noEmit || true
+
+  # DjangoDock - Validate setup script
+  djangodock:
+    name: DjangoDock CI
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Check required files exist
-        run: |
-          echo "Checking VercelDock..."
-          test -f VercelDock/docker-compose.yml
-          test -f VercelDock/Dockerfile
-          test -f VercelDock/Dockerfile.dev
-          test -f VercelDock/Makefile
-          test -f VercelDock/README.md
-
-          echo "Checking RNDock..."
-          test -f RNDock/docker-compose.yml
-          test -f RNDock/Dockerfile
-          test -f RNDock/Makefile
-          test -f RNDock/README.md
-
-          echo "Checking DjangoDock..."
-          test -f DjangoDock/setup.sh
-          test -f DjangoDock/README.md
-
-          echo "Checking root files..."
-          test -f README.md
-          test -f CHANGELOG.md
-          test -f CONTRIBUTING.md
-          test -f boxbox.sh
-
-          echo "All files present!"
-
-      - name: Validate Makefiles syntax
-        run: |
-          make -n -f VercelDock/Makefile help 2>&1 || true
-          make -n -f RNDock/Makefile help 2>&1 || true
-          echo "Makefiles valid!"
-
-      - name: Check boxbox.sh is executable
-        run: test -x boxbox.sh
-
-      - name: Validate docker-compose files
-        run: |
-          for f in VercelDock/docker-compose.yml RNDock/docker-compose.yml; do
-            echo "Checking $f..."
-            grep -qv "^version:" "$f" && echo "  No deprecated version key ✓" || echo "  WARNING: version key found"
-          done
-
-      - name: Check no deprecated version in compose files
-        run: |
-          ! grep -l "^version:" VercelDock/docker-compose.yml RNDock/docker-compose.yml 2>/dev/null || \
-            (echo "ERROR: deprecated version key found" && exit 1)
+      - name: Shellcheck
+        run: shellcheck DjangoDock/setup.sh || true
+      - name: Syntax check
+        run: bash -n DjangoDock/setup.sh

@@ -4,40 +4,45 @@ Templates Docker cle en main pour lancer rapidement des projets containerises.
 
 ---
 
+## CLI BoxBox
+
+Scaffolding rapide de projets :
+
+```bash
+# Lister les templates disponibles
+./boxbox.sh list
+
+# Creer un nouveau projet
+./boxbox.sh new monprojet --template vercel
+./boxbox.sh new monapi --template django
+./boxbox.sh new monapp --template rn
+```
+
+---
+
 ## Templates disponibles
 
 | Template | Stack | Description |
 |----------|-------|-------------|
 | [RNDock](RNDock/) | React Native + Expo | Apps mobiles containerisees |
 | [DjangoDock](DjangoDock/) | Django + PostgreSQL | APIs et apps web Python |
-| [VercelDock](VercelDock/) | Next.js + Supabase | Apps Vercel avec base de donnees |
+| [VercelDock](VercelDock/) | Next.js 16 + Supabase | Apps Vercel avec base de donnees |
 
 ---
 
 ## RNDock - React Native / Expo
 
-Template Docker pour projets React Native avec Expo.
-
 ```bash
 cd RNDock
-make build
-make create-project
-make install
+make init    # Setup complet one-shot
 make dev
 ```
 
 **Acces** : http://localhost:19006
 
-**Fichiers** :
-- [PROMPT_GENERATOR.md](RNDock/PROMPT_GENERATOR.md) - Prompt pour IA
-- [README.md](RNDock/README.md) - Documentation
-- [Makefile](RNDock/Makefile) - Commandes
-
 ---
 
 ## DjangoDock - Django + PostgreSQL
-
-Template Docker pour projets Django avec PostgreSQL.
 
 ```bash
 cd DjangoDock
@@ -49,69 +54,63 @@ make init
 
 **Acces** : http://localhost:8000
 
-**Fichiers** :
-- [PROMPT_GENERATOR.md](DjangoDock/PROMPT_GENERATOR.md) - Prompt pour IA
-- [README.md](DjangoDock/README.md) - Documentation
-- [setup.sh](DjangoDock/setup.sh) - Script interactif
-
 ---
 
-## VercelDock - Next.js + Supabase
-
-Template Docker pour projets Next.js (Vercel) avec Supabase.
+## VercelDock - Next.js 16 + Supabase
 
 ```bash
 cd VercelDock
-make build
-make create-project
-# Copier les fichiers Docker dans le projet cree
-cp Dockerfile Dockerfile.dev docker-compose.yml Makefile .dockerignore [NOM_DU_PROJET]/
-cd [NOM_DU_PROJET]
+make init    # Setup complet one-shot
+cd myapp
 make install
 make dev
 ```
 
-**Acces** : http://localhost:3000
-
-**Fichiers** :
-- [PROMPT_GENERATOR.md](VercelDock/PROMPT_GENERATOR.md) - Prompt pour IA
-- [README.md](VercelDock/README.md) - Documentation
-- [Makefile](VercelDock/Makefile) - Commandes
+**Acces** : http://localhost:3000 | Studio (profile full) : http://localhost:3001
 
 ---
 
-## CLI rapide — boxbox.sh
+## Commandes communes
 
-Créer un projet en une commande :
+Tous les templates utilisent un Makefile avec des commandes standardisees :
 
 ```bash
-# Lister les templates
-./boxbox.sh list
+# Initialisation
+make init               # Setup complet one-shot
 
-# Créer un nouveau projet
-./boxbox.sh new myapp --template vercel
-./boxbox.sh new myapi --template django
-./boxbox.sh new myapp --template rn
+# Developpement
+make build              # Construire les images
+make up                 # Demarrer en arriere-plan
+make dev                # Demarrer avec logs
+make down               # Arreter
+make restart            # Redemarrer
+
+# Qualite
+make test               # Lancer les tests
+make lint               # Linter le code
+make typecheck          # Verifier les types
+
+# Utilitaires
+make logs               # Voir les logs
+make shell              # Shell interactif
+make status             # Etat des containers + URLs
+make install            # Installer les dependances
+make clean              # Nettoyer (volumes inclus)
+
+# Base de donnees (VercelDock, DjangoDock)
+make db-shell           # Acceder a PostgreSQL
+make db-dump            # Dump de la base
+make db-restore SQL=f   # Restaurer un dump
 ```
 
 ---
 
-## Nouvelles commandes Make
+## Profils Docker Compose
 
-Tous les templates supportent maintenant :
-
-```bash
-make status      # État des services
-make test        # Lancer les tests
-make lint        # Lancer le linter
-make typecheck   # Vérification des types TypeScript
-```
-
-VercelDock uniquement :
+Services de base par defaut. Pour activer Supabase Studio et les extras :
 
 ```bash
-make db-dump     # Export de la base PostgreSQL
-make db-restore FILE=backup.sql  # Restaurer un backup
+docker compose --profile full up -d
 ```
 
 ---
@@ -120,52 +119,17 @@ make db-restore FILE=backup.sql  # Restaurer un backup
 
 ```
 boxbox/
-├── RNDock/                    # React Native + Expo
-│   ├── PROMPT_GENERATOR.md
-│   ├── README.md
-│   ├── Makefile
-│   ├── Dockerfile
-│   ├── docker-compose.yml
-│   └── ...
+├── boxbox.sh              # CLI BoxBox
+├── CONTRIBUTING.md        # Guide de contribution
+├── CHANGELOG.md           # Historique des versions
+├── .github/workflows/     # CI GitHub Actions
 │
-├── DjangoDock/                # Django + PostgreSQL
-│   ├── PROMPT_GENERATOR.md
-│   ├── README.md
-│   ├── QUICKSTART.md
-│   ├── setup.sh
-│   └── ...
+├── RNDock/                # React Native + Expo
+├── DjangoDock/            # Django + PostgreSQL
+├── VercelDock/            # Next.js 16 + Supabase
 │
-├── VercelDock/                # Next.js + Supabase
-│   ├── PROMPT_GENERATOR.md
-│   ├── README.md
-│   ├── Makefile
-│   ├── Dockerfile
-│   ├── Dockerfile.dev
-│   ├── docker-compose.yml
-│   └── ...
-│
-└── README.md                  # Ce fichier
+└── README.md              # Ce fichier
 ```
-
----
-
-## Utilisation avec une IA
-
-Chaque template contient un fichier `PROMPT_GENERATOR.md` avec un prompt a copier pour generer l'architecture via une IA (Claude, ChatGPT, etc.).
-
-1. Ouvrir le `PROMPT_GENERATOR.md` du template souhaite
-2. Copier le prompt
-3. Remplacer `[NOM_DU_PROJET]` par le nom de ton projet
-4. Coller dans une IA
-5. L'IA genere les fichiers et les commandes
-
----
-
-## Prerequis
-
-- Docker Desktop (v20.10+)
-- Docker Compose (v2.0+)
-- Git
 
 ---
 
@@ -173,45 +137,20 @@ Chaque template contient un fichier `PROMPT_GENERATOR.md` avec un prompt a copie
 
 | Feature | RNDock | DjangoDock | VercelDock |
 |---------|--------|------------|------------|
-| Stack | React Native + Expo | Django + PostgreSQL | Next.js + Supabase |
+| Stack | React Native + Expo | Django + PostgreSQL | Next.js 16 + Supabase |
 | Frontend | Expo (mobile + web) | Django templates | React (SSR) |
 | Backend | - | Django REST | API Routes |
 | Database | - | PostgreSQL | Supabase (PostgreSQL) |
-| Setup | Makefile | Script interactif | Makefile |
+| Setup | `make init` | `./setup.sh` | `make init` |
 | Port | 19006 | 8000 | 3000 |
 
 ---
 
-## Commandes communes
+## Prerequis
 
-Tous les templates utilisent un Makefile avec des commandes similaires :
-
-```bash
-make build          # Construire les images
-make up             # Demarrer en arriere-plan
-make dev            # Demarrer avec logs
-make down           # Arreter
-make logs           # Voir les logs
-make shell          # Shell interactif
-make clean          # Nettoyer (volumes inclus)
-make install        # Installer les dependances
-```
-
----
-
-## Guide de selection
-
-**App mobile** → [RNDock](RNDock/)
-- React Native cross-platform
-- Expo Go pour tests sur mobile
-
-**API REST / Web app Python** → [DjangoDock](DjangoDock/)
-- Django mature et stable
-- Admin interface incluse
-
-**App Next.js / Vercel** → [VercelDock](VercelDock/)
-- Next.js 15 avec App Router
-- Supabase pour la base de donnees
+- Docker Desktop (v20.10+)
+- Docker Compose V2
+- Git
 
 ---
 
